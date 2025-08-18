@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VessAPI Web Interface</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>VessAPI Web Interface</h1>
+
+        {% if message %}
+            <p class="message {% if error %}error{% else %}success{% endif %}">{{ message }}</p>
+        {% endif %}
+
+        {% if messages %}
+            {% for msg in messages %}
+                <p class="message success">{{ msg }}</p>
+            {% endfor %}
+        {% endif %}
+
+        {% if errors %}
+            {% for err in errors %}
+                <p class="message error">{{ err }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-section">
+            <h2>Register User</h2>
+            <form action="/register" method="post">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <div class="form-section">
+            <h2>Upload Music</h2>
+            <form action="/upload-music" method="post" enctype="multipart/form-data">
+                <label for="music_files">Music File(s):</label>
+                <input type="file" id="music_files" name="music_files" multiple required>
+
+                <label for="cover_image">Music Cover Image (Optional):</label>
+                <input type="file" id="cover_image" name="cover_image" accept="image/*">
+                
+                <button type="submit">Upload Music</button>
+            </form>
+        </div>
+
+        <div class="form-section">
+            <h2>Upload Album Cover</h2>
+            <form action="/upload-album-cover" method="post" enctype="multipart/form-data">
+                <label for="album_id">Album ID:</label>
+                <input type="text" id="album_id" name="album_id" required>
+                
+                <label for="album_cover_image">Album Cover Image:</label>
+                <input type="file" id="album_cover_image" name="cover_image" accept="image/*" required>
+                
+                <button type="submit">Upload Album Cover</button>
+            </form>
+        </div>
+
+        <div class="navigation-links">
+            <h2>Browse</h2>
+            <ul>
+                <li><a href="/albums_page">View All Albums</a></li>
+                <li><a href="/music_page">View All Music</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

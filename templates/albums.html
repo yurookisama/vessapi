@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albums - VessAPI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .album-cover-thumbnail {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .pagination-controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .pagination-controls button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pagination-controls button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .search-filter-form {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .search-filter-form input[type="text"] {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-filter-form button {
+            padding: 8px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>All Albums</h1>
+
+        <div class="search-filter-form">
+            <form action="/albums_page" method="get">
+                <input type="text" name="q" placeholder="Search by title or artist" value="{{ q if q else '' }}">
+                <input type="text" name="artist" placeholder="Filter by artist" value="{{ artist if artist else '' }}">
+                <button type="submit">Search/Filter</button>
+            </form>
+        </div>
+
+        {% if albums %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Album</th>
+                        <th>ID</th>
+                        <th>Artist</th>
+                        <th>Number Of Tracks</th>
+                        <th>Cover</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for album in albums %}
+                        <tr>
+                            <td>{{ album.title }}</td>
+                            <td>{{ album.album_id }}</td>
+                            <td><a href="/artists_page/{{ album.artist_id }}">{{ album.artist_name }}</a></td>
+                            <td>{{ album.num_tracks }}</td>
+                            <td>
+                                {% if album.cover_image_url %}
+                                    <img src="{{ album.cover_image_url }}" alt="{{ album.title }} Cover" class="album-cover-thumbnail">
+                                {% else %}
+                                    No Cover
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination-controls">
+                {% if skip > 0 %}
+                    <button onclick="window.location.href='/albums_page?skip={{ skip - limit }}&limit={{ limit }}{% if q %}&q={{ q }}{% endif %}{% if artist %}&artist={{ artist }}{% endif %}'">Previous</button>
+                {% else %}
+                    <button disabled>Previous</button>
+                {% endif %}
+                <span>Page {{ (skip / limit) + 1 }} of {{ (total / limit) | round(0, 'ceil') }}</span>
+                {% if (skip + limit) < total %}
+                    <button onclick="window.location.href='/albums_page?skip={{ skip + limit }}&limit={{ limit }}{% if q %}&q={{ q }}{% endif %}{% if artist %}&artist={{ artist }}{% endif %}'">Next</button>
+                {% else %}
+                    <button disabled>Next</button>
+                {% endif %}
+            </div>
+
+        {% else %}
+            <p>No albums found.</p>
+        {% endif %}
+
+        <p><a href="/">Back to Home</a></p>
+    </div>
+</body>
+</html>

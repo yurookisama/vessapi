@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ artist.name }} - Artist Profile</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .artist-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .artist-info img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+        }
+        .artist-details h2 {
+            margin-top: 0;
+        }
+        .content-section {
+            margin-top: 30px;
+        }
+        .content-section h3 {
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .music-cover-thumbnail, .album-cover-thumbnail {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="artist-info">
+            {% if artist.image_url %}
+                <img src="{{ artist.image_url }}" alt="{{ artist.name }} Image">
+            {% endif %}
+            <div class="artist-details">
+                <h2>{{ artist.name }}</h2>
+                {% if artist.bio %}
+                    <p>{{ artist.bio }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h3>Music by {{ artist.name }}</h3>
+            {% if music %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Artists</th>
+                            <th>Duration (s)</th>
+                            <th>Genre</th>
+                            <th>Publish Date</th>
+                            <th>Cover</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for track in music %}
+                            <tr>
+                                <td>{{ track.title }}</td>
+                                <td>{{ track.artists | join(', ') }}</td>
+                                <td>{{ track.duration }}</td>
+                                <td>{{ track.genre }}</td>
+                                <td>{{ track.publish_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    {% if track.cover_image_url %}
+                                        <img src="{{ track.cover_image_url }}" alt="{{ track.title }} Cover" class="music-cover-thumbnail">
+                                    {% else %}
+                                        No Cover
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No music found for {{ artist.name }}.</p>
+            {% endif %}
+        </div>
+
+        <div class="content-section">
+            <h3>Albums by {{ artist.name }}</h3>
+            {% if albums %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Album</th>
+                            <th>Artist</th>
+                            <th>Release Date</th>
+                            <th>Cover</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for album in albums %}
+                            <tr>
+                                <td>{{ album.title }}</td>
+                                <td>{{ album.artist }}</td>
+                                <td>{{ album.release_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    {% if album.cover_image_url %}
+                                        <img src="{{ album.cover_image_url }}" alt="{{ album.title }} Cover" class="album-cover-thumbnail">
+                                    {% else %}
+                                        No Cover
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No albums found for {{ artist.name }}.</p>
+            {% endif %}
+        </div>
+
+        <p><a href="/">Back to Home</a></p>
+    </div>
+</body>
+</html>
