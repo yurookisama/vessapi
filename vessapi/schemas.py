@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 from datetime import datetime, date
 from typing import List, Optional
 from uuid import UUID
@@ -140,7 +140,6 @@ class AlbumResponse(AlbumBase):
 # User Schemas
 class UserBase(BaseModel):
     username: str
-    email: EmailStr
     full_name: Optional[str] = None
     is_active: Optional[bool] = True
     role: Optional[str] = "user" # Added role field
@@ -151,7 +150,6 @@ class UserCreate(UserBase):
         json_schema_extra = {
             "example": {
                 "username": "testuser",
-                "email": "test@example.com",
                 "password": "securepassword",
                 "full_name": "Test User",
                 "is_active": True,
@@ -159,9 +157,9 @@ class UserCreate(UserBase):
             }
         }
 
-class UserUpdate(UserBase):
+class UserUpdate(BaseModel):
     username: Optional[str] = None
-    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
     password: Optional[str] = None # Şifre güncelleme için
     is_active: Optional[bool] = None
     role: Optional[str] = None # Added role field
@@ -182,7 +180,6 @@ class UserResponse(UserBase):
             "example": {
                 "user_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
                 "username": "testuser",
-                "email": "test@example.com",
                 "full_name": "Test User",
                 "is_active": True,
                 "role": "user",
@@ -198,14 +195,12 @@ class PlaylistBase(BaseModel):
     is_public: Optional[bool] = False
 
 class PlaylistCreate(PlaylistBase):
-    user_id: UUID
     class Config:
         json_schema_extra = {
             "example": {
                 "name": "My Top Hits",
                 "description": "My favorite songs.",
-                "is_public": True,
-                "user_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                "is_public": True
             }
         }
 
@@ -222,7 +217,7 @@ class PlaylistUpdate(PlaylistBase):
 
 class PlaylistResponse(PlaylistBase):
     playlist_id: UUID
-    user_id: UUID
+    owner_id: UUID
     music_ids: List[UUID]
     created_at: datetime
     updated_at: datetime
@@ -233,7 +228,7 @@ class PlaylistResponse(PlaylistBase):
                 "name": "My Top Hits",
                 "description": "My favorite songs.",
                 "is_public": True,
-                "user_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+                "owner_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
                 "music_ids": ["12345678-1234-5678-1234-567890abcdef"],
                 "created_at": "2023-04-01T10:00:00Z",
                 "updated_at": "2023-04-01T10:00:00Z"
@@ -282,3 +277,5 @@ class ArtistResponse(ArtistBase):
                 "updated_at": "2023-05-01T10:00:00Z"
             }
         }
+
+

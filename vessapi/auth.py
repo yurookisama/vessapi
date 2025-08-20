@@ -8,7 +8,7 @@ from typing import Optional, List # Added List here
 from pydantic import BaseModel
 
 from vessapi.models import User
-from vessapi.crud import get_user_by_email
+from vessapi.crud import get_user_by_username
 
 SECRET_KEY = os.getenv("SECRET_KEY", "your-super-secret-key")  # Ortam değişkeninden oku
 ALGORITHM = "HS256"
@@ -21,7 +21,7 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    email: Optional[str] = None
+    username: Optional[str] = None
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -41,13 +41,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
+        username: str = payload.get("sub")
+        if username is None:
             raise credentials_exception
-        token_data = TokenData(email=email)
+        token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = await get_user_by_email(email=token_data.email)
+    user = await get_user_by_username(username=token_data.username)
     if user is None:
         raise credentials_exception
     return user

@@ -6,7 +6,7 @@ from uuid import UUID
 import shutil
 import os
 import asyncio
-from pydantic import EmailStr
+
 
 from vessapi import crud, schemas, models
 from vessapi.auth import get_current_active_user
@@ -28,12 +28,12 @@ async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @router.post("/register", response_class=HTMLResponse)
-async def register_user(request: Request, username: str = Form(...), email: EmailStr = Form(...), password: str = Form(...)):
-    db_user = await crud.get_user_by_email(email=email)
+async def register_user(request: Request, username: str = Form(...), password: str = Form(...), full_name: str = Form(None)):
+    db_user = await crud.get_user_by_username(username=username)
     if db_user:
-        return templates.TemplateResponse("index.html", {"request": request, "message": "Email already registered", "error": True})
+        return templates.TemplateResponse("index.html", {"request": request, "message": "Username already registered", "error": True})
     
-    user_create = schemas.UserCreate(username=username, email=email, password=password)
+    user_create = schemas.UserCreate(username=username, password=password, full_name=full_name)
     await crud.create_user(user=user_create)
     return templates.TemplateResponse("index.html", {"request": request, "message": "User registered successfully!", "error": False})
 

@@ -1,143 +1,289 @@
-# VessAPI: Müzik Uygulamaları İçin Bir Yardımcı
+# 🎵 VessAPI - Müzik Yönetim Sistemi
 
-Merhaba! Bu proje, müzik uygulamaları yaparken size yardımcı olacak bir "arka plan" sistemidir. Müziklerinizi, albümlerinizi, sanatçılarınızı, kullanıcılarınızı ve kendi müzik listelerinizi (çalma listeleri) düzenlemenizi sağlar.
+VessAPI, müzik koleksiyonunuzu dijital ortamda organize etmenizi, paylaşmanizi ve yönetmenizi sağlayan modern bir müzik yönetim sistemidir. Bu sistem sayesinde müziklerinizi, albümlerinizi, sanatçılarınızı ve çalma listelerinizi kolayca yönetebilirsiniz.
 
-## VessAPI Ne Yapar? (Özellikler)
+## 🌟 Özellikler
 
-Bu sistem sayesinde şunları yapabilirsiniz:
+### 🎶 **Müzik Yönetimi**
+- Müzik dosyalarınızı sisteme yükleyebilirsiniz
+- Müzikleri başlık, sanatçı, tür gibi kriterlere göre arayabilirsiniz
+- Müzikleri doğrudan tarayıcınızdan dinleyebilirsiniz
+- Her müzik için kapak resmi ekleyebilirsiniz
 
-*   **Müziklerinizi Yönetin:** Yeni müzikler ekleyebilir, var olanları değiştirebilir, silebilir veya tüm müziklerinizi görebilirsiniz.
-*   **Albümlerinizi Yönetin:** Albümlerinizi ekleyebilir, düzenleyebilir, silebilir ve içindeki müzikleri görebilirsiniz.
-*   **Sanatçıları Yönetin:** Sanatçı bilgilerini ekleyebilir, güncelleyebilir veya silebilirsiniz.
-*   **Kullanıcıları Yönetin:** Uygulamanıza yeni kullanıcılar kaydedebilir, onların bilgilerini düzenleyebilir veya silebilirsiniz.
-*   **Çalma Listeleri Oluşturun:** Kendi müzik listelerinizi yapabilir, içine müzik ekleyip çıkarabilirsiniz.
-*   **Dosyaları Yükleyin:** Müzik dosyalarınızı ve albüm kapaklarını sisteme yükleyebilirsiniz.
+### 💿 **Albüm Organizasyonu**
+- Müziklerinizi albümler halinde gruplandırabilirsiniz
+- Albüm kapak resimleri ekleyebilirsiniz
+- Albüm bilgilerini (çıkış tarihi, tür, açıklama) yönetebilirsiniz
 
-## Nasıl Kurulur ve Çalıştırılır? (Adım Adım)
+### 🎤 **Sanatçı Bilgileri**
+- Sanatçı profilleri oluşturabilirsiniz
+- Sanatçı biyografileri ve fotoğrafları ekleyebilirsiniz
+- Sanatçıların tüm müziklerini ve albümlerini görüntüleyebilirsiniz
 
-Bu sistemi bilgisayarınızda çalıştırmak için birkaç şeye ihtiyacınız var:
+### 📝 **Çalma Listeleri**
+- Kişisel çalma listeleri oluşturabilirsiniz
+- Çalma listelerini herkese açık veya özel yapabilirsiniz
+- Çalma listelerine müzik ekleyip çıkarabilirsiniz
 
-### İhtiyacınız Olanlar:
+### 👤 **Kullanıcı Yönetimi**
+- Güvenli kullanıcı hesapları oluşturabilirsiniz
+- Kullanıcı adı ve şifre ile giriş yapabilirsiniz
+- Kişisel profilinizi yönetebilirsiniz
 
-1.  **Python:** Bilgisayarınızda Python programlama dili kurulu olmalı (sürüm 3.9 veya üzeri).
-2.  **MongoDB:** Bu, verilerinizi sakladığımız bir "veritabanı"dır. Bilgisayarınızda kurulu ve çalışıyor olması gerekiyor.
+## 🚀 Kurulum Rehberi
 
-### Kurulum Adımları:
+### Gereksinimler
+Sistemi çalıştırmak için bilgisayarınızda şunların yüklü olması gerekir:
 
-1.  **Projeyi Bilgisayarınıza Getirin:**
-    *   Bu projenin dosyalarını bilgisayarınıza indirin. Eğer `git` kullanıyorsanız, şu komutu çalıştırabilirsiniz:
-        ```bash
-        git clone <proje_adresi>
-        cd VessAPI
-        ```
-    *   Yoksa, dosyaları manuel olarak indirip `VessAPI` klasörüne girin.
+1. **Python 3.8 veya üzeri** - Programlama dili
+2. **MongoDB** - Veritabanı sistemi
+3. **Git** - Kod indirmek için (opsiyonel)
 
-2.  **Sanal Ortam Oluşturun (Önemli!):**
-    *   Bu adım, projenin ihtiyaç duyduğu özel araçları (kütüphaneleri) bilgisayarınızdaki diğer Python projelerinden ayırır. Böylece karışıklık olmaz.
-    *   `VessAPI` klasöründeyken, komut istemcisini (Windows'ta `cmd` veya `PowerShell`, Mac/Linux'ta `Terminal`) açın ve şu komutları yazın:
+### Adım 1: Projeyi İndirin
 
-    **Windows için:**
-    ```bash
-    python -m venv venv
-    .\venv\Scripts\activate
-    ```
+#### Yöntem 1: Git ile (Önerilen)
+```bash
+git clone https://github.com/kullanici-adi/VessAPI.git
+cd VessAPI
+```
 
-    **Mac/Linux için:**
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+#### Yöntem 2: ZIP dosyası ile
+1. GitHub sayfasından "Code" butonuna tıklayın
+2. "Download ZIP" seçeneğini seçin
+3. İndirilen dosyayı bir klasöre çıkarın
+4. Komut satırında o klasöre gidin
 
-3.  **Gerekli Araçları Yükleyin:**
-    *   Şimdi projenin çalışması için gereken tüm kütüphaneleri yükleyelim. Sanal ortamınız aktifken (komut satırında `(venv)` yazısını görmelisiniz), şu komutu çalıştırın:
-        ```bash
-        pip install -r requirements.txt
-        ```
+### Adım 2: Sanal Ortam Oluşturun
+```bash
+python -m venv venv
+```
 
-4.  **Uygulamayı Başlatın:**
-    *   Her şey hazır! Şimdi sistemi çalıştıralım. Aynı komut istemcisinde şu komutu yazın:
-        ```bash
-        uvicorn main:app --reload
-        ```
-    *   Eğer her şey yolundaysa, sistem `http://127.0.0.1:8000` adresinde çalışmaya başlayacaktır.
+### Adım 3: Sanal Ortamı Aktifleştirin
 
-## Sistemi Nasıl Kullanırım? (API ve Web Arayüzü)
+**Windows için:**
+```bash
+venv\Scripts\activate
+```
 
-Sistemi iki şekilde kullanabilirsiniz:
+**Mac/Linux için:**
+```bash
+source venv/bin/activate
+```
 
-### 1. API ile (Programcılar İçin)
+### Adım 4: Gerekli Paketleri Yükleyin
+```bash
+pip install -r requirements.txt
+```
 
-Bu sistem, diğer uygulamaların (mobil uygulama, web sitesi vb.) onunla konuşmasını sağlayan bir "API" sunar. Yani, uygulamanız bu sistemden bilgi alabilir veya ona bilgi gönderebilir.
+### Adım 5: MongoDB'yi Başlatın
+MongoDB'nin bilgisayarınızda çalıştığından emin olun. Genellikle şu komutla başlatılır:
+```bash
+mongod
+```
 
-**Nasıl Bağlanılır ve Kullanılır?**
+### Adım 6: Uygulamayı Başlatın
+```bash
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-1.  **Sistemin Adresi (Temel URL):**
-    *   Uygulamanızın bu sistemle konuşmak için bilmesi gereken ana adres şudur: `http://127.0.0.1:8000`
-    *   Bu adresi, yapacağınız her isteğin başına ekleyeceksiniz. Örneğin, müzikleri listelemek için `http://127.0.0.1:8000/v1/music/` adresine istek göndereceksiniz.
+🎉 **Tebrikler!** Uygulamanız artık çalışıyor. Tarayıcınızda `http://localhost:8000` adresine giderek kullanmaya başlayabilirsiniz.
 
-2.  **API Haritası (Dokümantasyon):**
-    *   Sistemin neler yapabildiğini ve hangi bilgilere ihtiyacı olduğunu görmek için tarayıcınızda şu adresleri ziyaret edin:
-        *   `http://127.0.0.1:8000/docs` (Daha interaktif bir arayüz, deneyip test edebilirsiniz.)
-        *   `http://127.0.0.1:8000/redoc` (Daha sade bir arayüz.)
-    *   Burada, her bir işlem (müzik ekleme, kullanıcı kaydetme vb.) için hangi adrese istek göndermeniz gerektiği, hangi bilgileri vermeniz gerektiği ve sistemin size nasıl bir cevap vereceği detaylıca anlatılır.
+## 📖 Kullanım Kılavuzu
 
-3.  **Giriş Yapma (Token Alma):**
-    *   Bazı işlemler (örneğin kendi çalma listenizi düzenleme veya kullanıcı bilgilerinizi güncelleme) için sisteme "giriş yapmış" olmanız gerekir.
-    *   Giriş yapmak için, `/token` adresine kullanıcı adınız (e-posta) ve şifrenizle bir istek gönderirsiniz. Sistem size bir "token" (bir çeşit geçici anahtar) verir.
-    *   Bu token'ı, giriş gerektiren sonraki tüm isteklerinizde "Authorization" (Yetkilendirme) başlığı altında `Bearer <token_buraya_gelecek>` şeklinde göndermeniz gerekir.
-    *   **Örnek (Python ile):**
-        ```python
-        import requests
+### İlk Kullanım
 
-        # Giriş yapmak için
-        token_url = "http://127.0.0.1:8000/token"
-        login_data = {"username": "sizin_emailiniz@example.com", "password": "sizin_sifreniz"}
-        token_response = requests.post(token_url, data=login_data)
-        access_token = token_response.json()["access_token"]
+1. **Tarayıcınızı açın** ve `http://localhost:8000` adresine gidin
+2. **Hesap oluşturun**: Ana sayfada kayıt formunu doldurun
+3. **Giriş yapın**: Kullanıcı adınız ve şifrenizle sisteme giriş yapın
 
-        # Müzik eklemek için (giriş gerektiren bir işlem)
-        music_url = "http://127.0.0.1:8000/v1/music/"
-        headers = {"Authorization": f"Bearer {access_token}"}
-        music_data = {"title": "Yeni Şarkı", "artist_ids": ["bir_sanatci_id"], "duration": 180, "file_path": "/path/to/song.mp3", "publish_date": "2023-01-01T00:00:00Z"}
-        response = requests.post(music_url, json=music_data, headers=headers)
-        print(response.json())
-        ```
+### Müzik Yükleme
 
-4.  **Dosya Yükleme (Müzik ve Kapak Resimleri):**
-    *   Müzik dosyalarınızı veya albüm kapaklarınızı sisteme yüklemek için özel adresler bulunur. Bu işlemler için giriş yapmanıza gerek yoktur.
-    *   Yüklediğiniz dosyalar, sistemin `library` klasörüne kaydedilir ve `http://127.0.0.1:8000/library/` adresi altında erişilebilir olur.
-    *   **Örnek (Python ile müzik yükleme):**
-        ```python
-        import requests
-        import os
+1. Ana sayfada **"Müzik Yükle"** bölümünü bulun
+2. **Müzik dosyalarınızı seçin** (MP3, FLAC, OGG formatları desteklenir)
+3. İsteğe bağlı olarak **kapak resmi** ekleyin
+4. **"Yükle"** butonuna tıklayın
+5. Sistem otomatik olarak müzik bilgilerini analiz edecek ve veritabanına ekleyecek
 
-        upload_url = "http://127.0.0.1:8000/upload-music"
-        music_file_path = "C:/Users/Siz/Muziklerim/harika_sarki.mp3" # Kendi dosya yolunuzu yazın
+### Müzik Dinleme
 
-        files = {
-            "music_files": (os.path.basename(music_file_path), open(music_file_path, "rb"), "audio/mpeg")
-        }
+1. **"Müzikler"** sayfasına gidin
+2. Dinlemek istediğiniz müziği bulun
+3. Müzik adına tıklayarak **çalma sayfasına** gidin
+4. **Play** butonuna tıklayarak dinlemeye başlayın
 
-        response = requests.post(upload_url, files=files)
-        print(response.json())
-        ```
+### Çalma Listesi Oluşturma
 
-5.  **Veri Gönderme ve Alma (JSON Formatı):**
-    *   Sistemle konuşurken, genellikle bilgileri "JSON" formatında gönderir ve alırsınız. JSON, bilgisayarların kolayca anlayabileceği bir veri biçimidir.
-    *   API dokümantasyonunda her işlem için hangi bilgileri JSON olarak göndermeniz gerektiği ve sistemin size nasıl bir JSON cevabı vereceği gösterilir.
+1. **"Çalma Listeleri"** sayfasına gidin
+2. **"Yeni Çalma Listesi"** butonuna tıklayın
+3. **Liste adı** ve **açıklama** girin
+4. Listeyi **herkese açık** veya **özel** yapın
+5. **"Oluştur"** butonuna tıklayın
+6. Oluşturduğunuz listeye müzik eklemek için müzik sayfalarından **"Çalma Listesine Ekle"** butonunu kullanın
 
+## 🔧 API Kullanımı (Geliştiriciler İçin)
 
-### 2. Web Arayüzü ile (Basit Kullanım)
+VessAPI, RESTful API mimarisi kullanır. Tüm API endpoint'leri `/v1/` prefix'i ile başlar.
 
-Sistemin basit bir web arayüzü de var. Tarayıcınızda şu adresleri ziyaret ederek kullanabilirsiniz:
+### Temel Endpoint'ler
 
-*   **Ana Sayfa:** `http://127.0.0.1:8000/`
-*   **Müzikler Sayfası:** `http://127.0.0.1:8000/music_page`
-*   **Albümler Sayfası:** `http://127.0.0.1:8000/albums_page`
-*   **Sanatçı Sayfası:** `http://127.0.0.1:8000/artists_page/{sanatci_id}` (Buradaki `{sanatci_id}` yerine bir sanatçının özel numarasını yazmanız gerekir.)
+#### Sistem Durumu
+```
+GET /health
+```
+Sistemin çalışıp çalışmadığını kontrol eder.
 
-Bu sayfalar üzerinden müziklerinizi, albümlerinizi ve sanatçılarınızı görebilir, yeni kullanıcı kaydedebilir ve müzik/albüm kapakları yükleyebilirsiniz.
+#### Kullanıcı İşlemleri
+```
+POST /v1/users/          # Yeni kullanıcı oluştur
+POST /token              # Giriş yap (token al)
+GET /v1/users/me         # Mevcut kullanıcı bilgileri
+```
 
-## Geliştirme ve Katkıda Bulunma
+#### Müzik İşlemleri
+```
+GET /v1/songs/           # Tüm müzikleri listele
+GET /v1/songs/{id}       # Belirli bir müziği getir
+GET /v1/songs/{id}/stream # Müziği dinle
+```
 
-Eğer bu projeyi daha da geliştirmek isterseniz, kodları inceleyebilir ve değişiklikler yapabilirsiniz. Katkılarınız her zaman bekleriz!
+#### Albüm İşlemleri
+```
+GET /v1/albums/          # Tüm albümleri listele
+GET /v1/albums/{id}      # Belirli bir albümü getir
+```
+
+#### Sanatçı İşlemleri
+```
+GET /v1/artists/         # Tüm sanatçıları listele
+GET /v1/artists/{id}     # Belirli bir sanatçıyı getir
+```
+
+#### Çalma Listesi İşlemleri
+```
+GET /v1/playlists/       # Erişilebilir çalma listelerini listele
+POST /v1/playlists/      # Yeni çalma listesi oluştur
+GET /v1/playlists/{id}   # Belirli bir çalma listesini getir
+```
+
+### API Dokümantasyonu
+Detaylı API dokümantasyonu için uygulamayı başlattıktan sonra şu adreslere gidin:
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+## 📁 Proje Yapısı
+
+```
+VessAPI/
+├── main.py                 # Ana uygulama dosyası
+├── requirements.txt        # Gerekli Python paketleri
+├── README.md              # Bu dosya
+├── library/               # Yüklenen dosyaların saklandığı klasör
+│   ├── music/            # Müzik dosyaları
+│   └── images/           # Resim dosyaları
+├── templates/             # Web sayfası şablonları
+├── static/               # CSS, JavaScript dosyaları
+└── vessapi/              # Ana kod klasörü
+    ├── models.py         # Veritabanı modelleri
+    ├── schemas.py        # API şemaları
+    ├── crud.py           # Veritabanı işlemleri
+    ├── auth.py           # Kimlik doğrulama
+    ├── database.py       # Veritabanı bağlantısı
+    └── routers/          # API endpoint'leri
+        ├── music.py      # Müzik API'leri
+        ├── albums.py     # Albüm API'leri
+        ├── artists.py    # Sanatçı API'leri
+        ├── playlists.py  # Çalma listesi API'leri
+        ├── users.py      # Kullanıcı API'leri
+        └── web.py        # Web sayfası API'leri
+```
+
+## ⚙️ Yapılandırma
+
+### Ortam Değişkenleri
+Uygulamayı özelleştirmek için şu ortam değişkenlerini kullanabilirsiniz:
+
+```bash
+SECRET_KEY=your-super-secret-key    # JWT token şifreleme anahtarı
+MONGODB_URL=mongodb://localhost:27017/vessapi  # MongoDB bağlantı adresi
+PORT=8000                           # Uygulama portu
+```
+
+### Dosya Yolları
+Yüklenen dosyalar varsayılan olarak şu klasörlerde saklanır:
+- **Müzik dosyaları**: `library/music/`
+- **Albüm kapakları**: `library/images/album_image/`
+- **Müzik kapakları**: `library/images/music_image/`
+- **Sanatçı fotoğrafları**: `library/images/artist_image/`
+
+## 🔒 Güvenlik
+
+### Kimlik Doğrulama
+- Sistem JWT (JSON Web Token) tabanlı kimlik doğrulama kullanır
+- Şifreler bcrypt algoritması ile güvenli şekilde şifrelenir
+- Her kullanıcının kendine ait çalma listeleri vardır
+
+### Dosya Güvenliği
+- Yüklenen dosyalar güvenli klasörlerde saklanır
+- Sadece desteklenen dosya formatları kabul edilir
+- Dosya boyutu sınırlamaları mevcuttur
+
+## 🐛 Sorun Giderme
+
+### Yaygın Sorunlar ve Çözümleri
+
+#### "MongoDB bağlantı hatası"
+**Sorun**: Uygulama MongoDB'ye bağlanamıyor
+**Çözüm**: 
+1. MongoDB'nin çalıştığından emin olun: `mongod`
+2. Bağlantı adresini kontrol edin
+3. MongoDB servisinin başlatıldığından emin olun
+
+#### "Port zaten kullanımda"
+**Sorun**: 8000 portu başka bir uygulama tarafından kullanılıyor
+**Çözüm**: 
+1. Farklı bir port kullanın: `--port 8001`
+2. Veya çalışan uygulamayı durdurun
+
+#### "Müzik dosyası yüklenmiyor"
+**Sorun**: Müzik dosyası sisteme yüklenmiyor
+**Çözüm**:
+1. Dosya formatının desteklendiğinden emin olun (MP3, FLAC, OGG)
+2. Dosya boyutunun çok büyük olmadığından emin olun
+3. `library/music/` klasörünün yazma izni olduğundan emin olun
+
+#### "Giriş yapamıyorum"
+**Sorun**: Kullanıcı adı ve şifre ile giriş yapamıyorum
+**Çözüm**:
+1. Kullanıcı adı ve şifrenizi doğru yazdığınızdan emin olun
+2. Hesabınızın aktif olduğundan emin olun
+3. Gerekirse yeni bir hesap oluşturun
+
+## 🤝 Katkıda Bulunma
+
+Bu projeye katkıda bulunmak isterseniz:
+
+1. **Fork** yapın (projeyi kendi hesabınıza kopyalayın)
+2. **Feature branch** oluşturun (`git checkout -b yeni-ozellik`)
+3. Değişikliklerinizi **commit** edin (`git commit -am 'Yeni özellik eklendi'`)
+4. Branch'inizi **push** edin (`git push origin yeni-ozellik`)
+5. **Pull Request** oluşturun
+
+## 📞 Destek
+
+Herhangi bir sorunuz veya sorununuz varsa:
+
+- **GitHub Issues**: Teknik sorunlar için issue açın
+- **Dokümantasyon**: `http://localhost:8000/docs` adresindeki API dokümantasyonunu inceleyin
+- **Topluluk**: Diğer kullanıcılarla deneyim paylaşın
+
+## 📄 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosyasına bakın.
+
+## 🙏 Teşekkürler
+
+VessAPI'yi kullandığınız için teşekkür ederiz! Bu proje, müzik severlerin dijital koleksiyonlarını daha iyi yönetebilmeleri için geliştirilmiştir.
+
+---
+
+**Not**: Bu README dosyası sürekli güncellenmektedir. En son sürüm için GitHub sayfasını kontrol edin.

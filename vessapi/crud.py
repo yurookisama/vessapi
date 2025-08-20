@@ -62,17 +62,17 @@ async def create_music(music: MusicCreate, owner_id: UUID) -> Music:
     await db_music.insert()
     return db_music
 
-async def update_music(music_id: UUID, music: MusicUpdate, owner_id: UUID) -> Optional[Music]:
+async def update_music(music_id: UUID, music: MusicUpdate, owner_id: UUID, is_admin: bool = False) -> Optional[Music]:
     db_music = await get_music(music_id)
-    if db_music and db_music.owner_id == owner_id:
+    if db_music and (db_music.owner_id == owner_id or is_admin):
         update_data = music.model_dump(exclude_unset=True)
         await db_music.update({"$set": update_data})
         return await get_music(music_id)
     return None
 
-async def delete_music(music_id: UUID, owner_id: UUID) -> Optional[Music]:
+async def delete_music(music_id: UUID, owner_id: UUID, is_admin: bool = False) -> Optional[Music]:
     db_music = await get_music(music_id)
-    if db_music and db_music.owner_id == owner_id:
+    if db_music and (db_music.owner_id == owner_id or is_admin):
         await db_music.delete()
         return db_music
     return None
@@ -115,17 +115,17 @@ async def create_album(album: AlbumCreate, owner_id: UUID) -> Album:
     await db_album.insert()
     return db_album
 
-async def update_album(album_id: UUID, album: AlbumUpdate, owner_id: UUID) -> Optional[Album]:
+async def update_album(album_id: UUID, album: AlbumUpdate, owner_id: UUID, is_admin: bool = False) -> Optional[Album]:
     db_album = await get_album(album_id)
-    if db_album and db_album.owner_id == owner_id:
+    if db_album and (db_album.owner_id == owner_id or is_admin):
         update_data = album.model_dump(exclude_unset=True)
         await db_album.update({"$set": update_data})
         return await get_album(album_id)
     return None
 
-async def delete_album(album_id: UUID, owner_id: UUID) -> Optional[Album]:
+async def delete_album(album_id: UUID, owner_id: UUID, is_admin: bool = False) -> Optional[Album]:
     db_album = await get_album(album_id)
-    if db_album:
+    if db_album and (db_album.owner_id == owner_id or is_admin):
         await db_album.delete()
         return db_album
     return None
@@ -134,20 +134,23 @@ async def delete_album(album_id: UUID, owner_id: UUID) -> Optional[Album]:
 async def get_user(user_id: UUID) -> Optional[User]:
     return await User.find_one(User.user_id == user_id)
 
-async def get_user_by_email(email: str) -> Optional[User]:
-    return await User.find_one(User.email == email)
+async def get_user_by_username(username: str) -> Optional[User]:
+    return await User.find_one({"username": username})
 
 async def get_users(skip: int = 0, limit: int = 100) -> List[User]:
     return await User.find_all().skip(skip).limit(limit).to_list()
 
 async def create_user(user: UserCreate) -> User:
     hashed_password = get_password_hash(user.password)
+    # Create a dictionary from the user model, excluding the password
+    user_data = user.model_dump(exclude={"password"})
+    
+    # Ensure the role is always 'user' when creating through the public API
+    user_data['role'] = 'user'
+
     db_user = User(
-        username=user.username,
-        email=user.email,
-        hashed_password=hashed_password,
-        full_name=user.full_name,
-        is_active=user.is_active
+        **user_data,
+        hashed_password=hashed_password
     )
     await db_user.insert()
     return db_user
@@ -170,11 +173,30 @@ async def delete_user(user_id: UUID) -> Optional[User]:
     return None
 
 # Playlist CRUD
-async def get_playlist(playlist_id: UUID) -> Optional[Playlist]:
-    return await Playlist.find_one(Playlist.playlist_id == playlist_id)
+async def get_playlist(playlist_id: UUID, user_id: Optional[UUID] = None) -> Optional[Playlist]:
+    playlist = await Playlist.find_one(Playlist.playlist_id == playlist_id)
+    if playlist:
+        # Allow access if the playlist is public or if the user is the owner
+        if playlist.is_public or (user_id and playlist.owner_id == user_id):
+            return playlist
+    return None
 
-async def get_playlists(skip: int = 0, limit: int = 100) -> List[Playlist]:
-    return await Playlist.find_all().skip(skip).limit(limit).to_list()
+async def get_playlists(
+    skip: int = 0, 
+    limit: int = 100, 
+    user_id: Optional[UUID] = None
+) -> List[Playlist]:
+    query = {
+        "$or": [
+            {"is_public": True},
+            {"owner_id": user_id}
+        ]
+    }
+    if user_id is None:
+        # If no user is provided, only return public playlists
+        query = {"is_public": True}
+        
+    return await Playlist.find(query).skip(skip).limit(limit).to_list()
 
 async def create_playlist(playlist: PlaylistCreate, owner_id: UUID) -> Playlist:
     db_playlist = Playlist(**playlist.model_dump(), owner_id=owner_id)
@@ -254,3 +276,57 @@ async def get_music_by_artist_id(artist_id: UUID, skip: int = 0, limit: int = 10
 
 async def get_albums_by_artist_id(artist_id: UUID, skip: int = 0, limit: int = 100) -> List[Album]:
     return await Album.find(Album.artist_id == artist_id).skip(skip).limit(limit).to_list()
+
+# Helper function to enrich album response with additional data
+async def enrich_album_response(album: Album):
+    from vessapi.schemas import AlbumResponse
+    
+    # Get artist name
+    artist = await get_artist(album.artist_id)
+    artist_name = artist.name if artist else "Unknown Artist"
+    
+    # Count tracks in album
+    num_tracks = len(album.music_ids)
+    
+    return AlbumResponse(
+        album_id=album.album_id,
+        title=album.title,
+        artist_id=album.artist_id,
+        artist_name=artist_name,
+        release_date=album.release_date,
+        cover_image_url=album.cover_image_url,
+        genre=album.genre,
+        description=album.description,
+        music_ids=album.music_ids,
+        num_tracks=num_tracks,
+        created_at=album.created_at,
+        updated_at=album.updated_at
+    )
+
+# Helper function to enrich music response with additional data
+async def enrich_music_response(music: Music):
+    from vessapi.schemas import MusicResponse
+    
+    # Get artist names
+    artist_names = []
+    for artist_id in music.artist_ids:
+        artist = await get_artist(artist_id)
+        if artist:
+            artist_names.append(artist.name)
+    
+    return MusicResponse(
+        music_id=music.music_id,
+        title=music.title,
+        artist_ids=music.artist_ids,
+        artist_names=artist_names,
+        duration=music.duration,
+        file_path=music.file_path,
+        genre=music.genre,
+        track_number=music.track_number,
+        publish_date=music.publish_date,
+        lyrics=music.lyrics,
+        album_id=music.album_id,
+        cover_image_url=music.cover_image_url,
+        created_at=music.created_at,
+        updated_at=music.updated_at
+    )

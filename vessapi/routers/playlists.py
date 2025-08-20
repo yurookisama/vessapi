@@ -15,15 +15,15 @@ router = APIRouter(
 async def create_playlist_api(playlist: schemas.PlaylistCreate, current_user: models.User = Depends(get_current_active_user)):
     return await crud.create_playlist(playlist=playlist, owner_id=current_user.user_id)
 
-@router.get("/", response_model=List[schemas.PlaylistResponse], summary="Retrieve all playlists", description="Retrieves a list of all playlists. Supports pagination.")
+@router.get("/", response_model=List[schemas.PlaylistResponse], summary="Retrieve accessible playlists", description="Retrieves a list of public playlists and playlists owned by the current user.")
 async def read_playlists(skip: int = Query(0, ge=0, description="Number of items to skip"), limit: int = Query(100, ge=1, le=1000, description="Maximum number of items to return"), current_user: models.User = Depends(get_current_active_user)):
-    return await crud.get_playlists(skip=skip, limit=limit)
+    return await crud.get_playlists(skip=skip, limit=limit, user_id=current_user.user_id)
 
-@router.get("/{playlist_id}", response_model=schemas.PlaylistResponse, summary="Retrieve a single playlist by ID", description="Retrieves a specific playlist using its unique ID.")
+@router.get("/{playlist_id}", response_model=schemas.PlaylistResponse, summary="Retrieve a single playlist by ID", description="Retrieves a specific playlist by its ID. Can only be accessed by the owner or if the playlist is public.")
 async def read_playlist(playlist_id: UUID, current_user: models.User = Depends(get_current_active_user)):
-    db_playlist = await crud.get_playlist(playlist_id=playlist_id)
+    db_playlist = await crud.get_playlist(playlist_id=playlist_id, user_id=current_user.user_id)
     if db_playlist is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Playlist not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Playlist not found or you don't have permission to view it")
     return db_playlist
 
 @router.put("/{playlist_id}", response_model=schemas.PlaylistResponse, summary="Update an existing playlist", description="Updates an existing playlist identified by its ID. Only the owner of the playlist can update it.")
