@@ -10,9 +10,11 @@ from pydantic import BaseModel
 from vessapi.models import User
 from vessapi.crud import get_user_by_username
 
-SECRET_KEY = os.getenv("SECRET_KEY", "your-super-secret-key")  # Ortam değişkeninden oku
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+from vessapi.config import settings
+
+SECRET_KEY = settings.security.secret_key
+ALGORITHM = settings.security.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.security.access_token_expire_minutes
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

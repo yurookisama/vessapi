@@ -24,7 +24,8 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
     """
     Fixture that initializes a test database and yields an AsyncClient for the main app.
     """
-    db_url = os.getenv("DATABASE_URL", "mongodb://localhost:27017/vessapi_test")
+    from vessapi.config import settings
+    db_url = settings.get_database_url(test_mode=True)
     db_client = AsyncIOMotorClient(db_url)
     
     await init_beanie(

@@ -8,6 +8,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from vessapi import crud, schemas, models
 from vessapi.database import init_db
 from vessapi.auth import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, Token
+from vessapi.config import settings
 from vessapi.routers import music, albums, users, playlists, artists, web
 
 app = FastAPI(
@@ -19,19 +20,15 @@ app = FastAPI(
 @app.on_event("startup")
 async def startup_event():
     await init_db()
-    os.makedirs("library/music", exist_ok=True)
-    os.makedirs("library/images/album_image", exist_ok=True)
-    os.makedirs("library/images/music_image", exist_ok=True)
-    os.makedirs("library/images/user_image", exist_ok=True)
-    os.makedirs("library/images/artist_image", exist_ok=True)
-    port = os.environ.get("PORT", "8000")
-    print(f"VessAPI is running on port {port}")
+    settings.create_directories()
+    print(f"VessAPI is running on {settings.server.host}:{settings.server.port}")
+    print(f"Database: {settings.database.url}/{settings.database.name}")
+    print(f"Debug mode: {settings.server.debug}")
 
 # CORS Middleware
-origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.server.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

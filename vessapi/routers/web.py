@@ -11,6 +11,7 @@ import asyncio
 from vessapi import crud, schemas, models
 from vessapi.auth import get_current_active_user
 from vessapi.services import process_music_upload_task, SYSTEM_USER_ID
+from vessapi.config import settings
 
 router = APIRouter(
     tags=["web"],
@@ -18,10 +19,6 @@ router = APIRouter(
 )
 
 templates = Jinja2Templates(directory="templates")
-
-MUSIC_UPLOAD_DIRECTORY = "library/music"
-ALBUM_IMAGE_DIRECTORY = "library/images/album_image"
-MUSIC_IMAGE_DIRECTORY = "library/images/music_image"
 
 @router.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -44,11 +41,11 @@ async def upload_music(request: Request, music_files: List[UploadFile] = File(..
     music_cover_image_url = None
 
     if cover_image and cover_image.filename:
-        music_cover_image_path = os.path.join(MUSIC_IMAGE_DIRECTORY, cover_image.filename)
+        music_cover_image_path = os.path.join(settings.files.music_image_directory, cover_image.filename)
         try:
             with open(music_cover_image_path, "wb") as buffer:
                 shutil.copyfileobj(cover_image.file, buffer)
-            music_cover_image_url = f"/library/images/music_image/{cover_image.filename}"
+            music_cover_image_url = f"/{settings.files.music_image_directory}/{cover_image.filename}"
             messages.append(f"Music cover image '{cover_image.filename}' uploaded successfully.")
         except Exception as e:
             errors.append(f"Error uploading music cover image '{cover_image.filename}': {e}")
@@ -56,7 +53,7 @@ async def upload_music(request: Request, music_files: List[UploadFile] = File(..
             cover_image.file.close()
 
     for music_file in music_files:
-        file_location = os.path.join(MUSIC_UPLOAD_DIRECTORY, music_file.filename)
+        file_location = os.path.join(settings.files.music_upload_directory, music_file.filename)
         try:
             with open(file_location, "wb") as buffer:
                 shutil.copyfileobj(music_file.file, buffer)
@@ -75,13 +72,13 @@ async def upload_album_cover(request: Request, album_id: UUID = Form(...), cover
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
 
-    file_location = os.path.join(ALBUM_IMAGE_DIRECTORY, cover_image.filename)
+    file_location = os.path.join(settings.files.album_image_directory, cover_image.filename)
     try:
         with open(file_location, "wb") as buffer:
             shutil.copyfileobj(cover_image.file, buffer)
         
-        album_update = schemas.AlbumUpdate(cover_image_url=f"/library/images/album_image/{cover_image.filename}")
-        await crud.update_album(album_id, album_update, SYSTEM_USER_ID)
+        album_update = schemas.AlbumUpdate(cover_image_url=f"/{settings.files.album_image_directory}/{cover_image.filename}")
+        await crud.update_album(album_id, album_update, SYSTEM_USER_ID, is_admin=True)
         return templates.TemplateResponse("index.html", {"request": request, "message": f"Album cover for '{album.title}' updated successfully!", "error": False})
     except Exception as e:
         return templates.TemplateResponse("index.html", {"request": request, "message": f"Error uploading album cover: {e}", "error": True})
